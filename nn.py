@@ -36,11 +36,32 @@ class Linear(Layer):
         return self.outputs
     
     def backward(self, y_errors, learning_rate):
-        # Y = W * X + B
-        # given dE / dY, what's the dE/dW, dE/dB and dE/dX
-        # dE/dB = dE/dY
-        # dE/dW = dE/dY * dY/dW, where dY/dW = X
-        # dE/dX = dE/dY * dY/dX, where dY/dX = W
+        """Given errors of the output layer and the learning rate,
+        calculate the error of the input layer. Meanwhile, update
+        the weights and bias parameters given the gradients.
+        Value vectors:
+            Y: vector dimension of N_y (1 row of N_y columns)
+            B: vector dimension of N_y (1 row of N_y columns)
+            X: vector dimension of N_x (1 row of N_x columns)
+            W: matrix dimension of N_x * N_y (N_x rows and N_y columns)
+            E: loss, which is a scalar.
+            dE/dY, dE/dB: vector dimensions same as Y
+            dY/dW: vector dimension same as X
+            dE/dW: matrix dimension same as W
+
+        Calcuations:
+            Y = X * W + B
+            dE/dB = dE/dY
+            dE/dW = dY/dW * dE/dY, where dY/dW = X
+            dE/dX = dE/dY * dY/dX, where dY/dX = W
+
+        Args:
+            y_errors (array): errors on the output vector.
+            learning_rate (float): learning rate for the parameters
+
+        Returns:
+            array: errors on the input vector.
+        """
         x_errors = np.dot(y_errors, self.weights.T)
         weight_errors = np.dot(self.input.T, y_errors)
 
