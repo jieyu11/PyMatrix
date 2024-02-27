@@ -19,6 +19,16 @@ class Layer:
     @next_layer.setter
     def next_layer(self, layer):
         self._next = layer
+    
+    def forward(self):
+        raise NotImplementedError
+
+    def backward(self):
+        raise NotImplementedError
+
+    def parameters(self):
+        raise NotImplementedError
+
         
 class Linear(Layer):
     def __init__(self, d_input, d_output):
@@ -73,13 +83,26 @@ class Linear(Layer):
     def weights(self):
         return self._weights
     
+    @weights.setter
+    def weights(self, _weights):
+        self._weights = _weights
+    
     @property
     def bias(self):
         return self._bias
+    
+    @bias.setter
+    def bias(self, _bias):
+        self._bias = _bias
 
-class Relu:
+class Relu(Layer):
     def __init__(self):
         pass
 
-    def forward(self, X):
+    @staticmethod
+    def forward(X):
         return np.maximum(0., X)
+
+    @staticmethod
+    def backward(y_error):
+        return np.maximum(0., y_error)

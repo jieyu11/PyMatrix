@@ -40,6 +40,6 @@ class Module:
         curr = self.tail.prev_layer
         values = errors
         while curr != self.head:
-            values = curr.backward(values)
+            values = curr.backward(values, learning_rate)
         return values
         
