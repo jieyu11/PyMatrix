@@ -31,7 +31,7 @@ class Layer:
 
         
 class Linear(Layer):
-    def __init__(self, d_input, d_output):
+    def __init__(self, d_input, d_output, learning_rate=0.001):
         super().__init__()
         self.d_input = d_input
         self.d_output = d_output
@@ -39,13 +39,27 @@ class Linear(Layer):
         self._bias = 2 * (np.random.rand(1, d_output) - 0.5)
         self.inputs = None
         self.outputs = None
+        self._lr = learning_rate
 
+    def __repr__(self):
+        return f"Linear layer ({self.d_input}, {self.d_output}), lr={self._lr}"
+
+    @property
+    def learning_rate(self):
+        return self._lr
+    
+    @learning_rate.setter
+    def learning_rate(self, lr):
+        self._lr = lr
+        
     def forward(self, X):
         self.inputs = X
-        self.outputs = X * self._weights + self._bias
+        print("Forward input", self.inputs, self.inputs.shape)
+        self.outputs = np.dot(X, self._weights) + self._bias
+        print("Forward output", self.outputs, self.outputs.shape)
         return self.outputs
     
-    def backward(self, y_errors, learning_rate):
+    def backward(self, y_errors):
         """Given errors of the output layer and the learning rate,
         calculate the error of the input layer. Meanwhile, update
         the weights and bias parameters given the gradients.
@@ -72,11 +86,22 @@ class Linear(Layer):
         Returns:
             array: errors on the input vector.
         """
+        print("y_errors", y_errors, len(y_errors), y_errors.shape)
+        print("self.weights.T", self.weights.T, len(self.weights.T), self.weights.T.shape)
         x_errors = np.dot(y_errors, self.weights.T)
-        weight_errors = np.dot(self.input.T, y_errors)
+        print("self.input.T", self.inputs.T, len(self.inputs.T), self.inputs.T.shape)
+        weight_errors = np.dot(self.inputs.T, y_errors)
+        print("weight_errors", weight_errors, len(weight_errors), weight_errors.shape)
+        print("self.weights", self.weights, len(self.weights), self.weights.shape)
 
-        self.weights -= learning_rate * weight_errors
-        self.bias -= learning_rate * y_errors
+        print("lr * weight", self._lr * weight_errors)
+        weight_errors = self._lr * weight_errors
+        weight_errors = weight_errors.reshape(self.weights.shape)
+        print("Reshaped weights", weight_errors, weight_errors.shape)
+        self.weights = self.weights - weight_errors
+        print("self.weights again", self.weights, len(self.weights), self.weights.shape)
+        self.bias = self.bias - self._lr * y_errors
+        print("bias", self.bias)
         return x_errors
 
     @property
@@ -107,6 +132,9 @@ class Relu(Layer):
     def backward(y_error):
         return np.maximum(0., y_error)
 
+    def __repr__(self):
+        return f"Relu layer."
+
 class Sigmoid(Layer):
     def __init__(self):
         pass
@@ -121,3 +149,6 @@ class Sigmoid(Layer):
         # dsigmoid(x) / dx = sigmoid(x) * (1 - sigmoid(x))
         sig = self.forward(y_error)
         return y_error * sig * (1-sig) 
+
+    def __repr__(self):
+        return f"Sigmoid layer."

@@ -11,7 +11,6 @@ class NeuralNet:
     def __init__(self):
         self._module = Module()
         self._loss = None
-        self._lr = 0.0001
     
     def add_layer(self, layer):
         self._module.add(layer)
@@ -28,14 +27,6 @@ class NeuralNet:
     def loss(self, loss_function):
         self._loss = loss_function
     
-    @property
-    def learning_rate(self):
-        return self._lr
-    
-    @learning_rate.setter
-    def learning_rate(self, lr):
-        self._lr = lr
-        
     def train(self, X_train, y_train, n_epoch):
         assert self.loss is not None, "Please set the loss function!"
         N_data = len(y_train)
@@ -45,13 +36,22 @@ class NeuralNet:
             for idt, X in enumerate(X_train):
                 y_true = y_train[idt]
                 # forward propagation:
-                y_pred = self.module(X)
-                total_error += self.loss(y_pred, y_true)
+                # input X needs to be 2D array like: [[1., 2., 3.]]
+                y_pred = self._module.forward(X.reshape((1, len(X))))
+                # loss functions takes array inputs
+                y_true = np.array([[y_true]])
+                print("true", y_true)
+                print("pred", y_pred)
+                err = self._loss.forward(y_pred, y_true)
+                print("event error", err)
+                total_error += err[0][0]
 
+                print("total error", total_error)
                 # backward propagation
-                d_error = self.loss.backward(y_pred, y_true)
-                self.module.backward(d_error, self.learning_rate)
-            logger.info("Loss: %12.3f" % total_error / N_data)
+                d_error = self._loss.backward(y_pred, y_true)
+                print("d_error", d_error)
+                self._module.backward(d_error)
+            logger.info("Loss: %12.3f" % (total_error / N_data))
         logger.info("Trained model!")
     
     def test(self, X_test, y_test):
@@ -61,9 +61,10 @@ class NeuralNet:
         predicted = np.array()
         for idt, X in enumerate(X_test):
             y_true = y_test[idt]
-            y_pred = self.module(X)
-            predicted.append(y_pred)
-            total_error += self.loss(y_pred, y_true)
+            y_pred = self._module.forward(X)[0]
+            predicted.append(y_pred[0])
+            y_true = np.array([y_true])
+            total_error += self._loss.forward(y_pred, y_true)
         error = total_error / N_data
         logger.info("Error of test data: %12.3f" % error)
         return predicted

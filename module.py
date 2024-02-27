@@ -7,11 +7,11 @@ logger = logging.getLogger(__name__)
 
 
 class Module:
-    def __init__(self) -> None:
+    def __init__(self):
         self.head = Layer()
         self.tail = Layer()
-        self.head.next_layer(self.tail)
-        self.tail.prev_layer(self.head)
+        self.head.next_layer = self.tail
+        self.tail.prev_layer = self.head
         self.n_layers = 0
     
     def add(self, layer):
@@ -30,16 +30,20 @@ class Module:
         curr = self.head.next_layer
         values = inputs
         while curr != self.tail:
-            values = curr(values)
+            print("Starting forward with layer, ", curr)
+            values = curr.forward(values)
+            curr = curr.next_layer
         return values
 
-    def backward(self, errors, learning_rate):
+    def backward(self, errors):
         if self.n_layers == 0:
             logger.error("No layer is added to the module.")
             return
         curr = self.tail.prev_layer
         values = errors
         while curr != self.head:
-            values = curr.backward(values, learning_rate)
+            print("Starting backward with layer, ", curr)
+            values = curr.backward(values)
+            curr = curr.prev_layer
         return values
         

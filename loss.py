@@ -18,11 +18,11 @@ class MSELoss:
         return 2 * diff / len(output)
 
 class CrossEntropyLoss:
+    MINI = 1.e-12
     def __init__(self):
         pass
     
-    @staticmethod
-    def forward(output, target):
+    def forward(self, output, target):
         """For binary classification, targets are 0's and 1's.
         The fuction is:
             Loss = - 1./N * sum(y_i^true * log(y_i^pred) + (1- y_i^true)*log(1 - y_i^pred))
@@ -31,13 +31,15 @@ class CrossEntropyLoss:
             target (array): Truth values.
         """
         N = len(output)
+        print("output", output, "target", target)
         assert len(target) == N, "target and output vectors must have same dimensions."
-        cost = np.dot(np.log(output), target.T) + np.dot(np.log(1-output), (1-target).T)
+        cost = np.dot(np.log(output+self.MINI), target.T) + np.dot(np.log(1-output+self.MINI), (1-target).T)
+        print("Cross entropy loss", cost)
         cost *= -1 / len(output)
+        print("Cross entropy loss again", cost)
         return cost
     
-    @staticmethod
-    def backward(output, target):
+    def backward(self, output, target):
         """Backward probagation of cross entropy loss function.
         EY_i = y_i^pred - y_i^true
         Loss = - 1./N * sum(y_i^true * log(y_i^pred) + (1- y_i^true)*log(1 - y_i^pred))
@@ -48,8 +50,7 @@ class CrossEntropyLoss:
             output (array): ML model prediction.
             target (array): Truth values.
         """
-        MINI = 1.e-12
         N = len(output)
         assert len(target) == N, "target and output vectors must have same dimensions."
-        error = target / (output+MINI) * (-1./N) + (1-target) / (1-output+MINI) * (1./N)
+        error = target / (output+self.MINI) * (-1./N) + (1-target) / (1-output+self.MINI) * (1./N)
         return error
