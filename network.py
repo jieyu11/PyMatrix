@@ -40,18 +40,19 @@ class NeuralNet:
                 y_pred = self._module.forward(X.reshape((1, len(X))))
                 # loss functions takes array inputs
                 y_true = np.array([[y_true]])
-                print("true", y_true)
-                print("pred", y_pred)
+                #print("true", y_true)
+                #print("pred", y_pred)
                 err = self._loss.forward(y_pred, y_true)
-                print("event error", err)
+                # print("event error", err, "predicted", y_pred, "true", y_true)
                 total_error += err[0][0]
 
-                print("total error", total_error)
+                #print("total error", total_error)
                 # backward propagation
                 d_error = self._loss.backward(y_pred, y_true)
-                print("d_error", d_error)
+                #print("d_error", d_error)
                 self._module.backward(d_error)
-            logger.info("Loss: %12.3f" % (total_error / N_data))
+
+            logger.info("Epoch: %d, Loss: %12.3f\n" % (iep, total_error / N_data))
         logger.info("Trained model!")
     
     def test(self, X_test, y_test):

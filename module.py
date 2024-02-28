@@ -30,8 +30,10 @@ class Module:
         curr = self.head.next_layer
         values = inputs
         while curr != self.tail:
-            print("Starting forward with layer, ", curr)
+            # print("Starting forward with layer, ", curr)
+            # print("Layer inputs", values)
             values = curr.forward(values)
+            # print("Layer outputs", values)
             curr = curr.next_layer
         return values
 
@@ -42,7 +44,7 @@ class Module:
         curr = self.tail.prev_layer
         values = errors
         while curr != self.head:
-            print("Starting backward with layer, ", curr)
+            #print("Starting backward with layer, ", curr)
             values = curr.backward(values)
             curr = curr.prev_layer
         return values

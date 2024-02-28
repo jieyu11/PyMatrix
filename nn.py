@@ -54,9 +54,11 @@ class Linear(Layer):
         
     def forward(self, X):
         self.inputs = X
-        print("Forward input", self.inputs, self.inputs.shape)
+        # print("Forward input", self.inputs, self.inputs.shape)
+        # print("Forward weights", self._weights)
+        # print("Forward biases", self._bias)
         self.outputs = np.dot(X, self._weights) + self._bias
-        print("Forward output", self.outputs, self.outputs.shape)
+        # print("Forward output", self.outputs, self.outputs.shape)
         return self.outputs
     
     def backward(self, y_errors):
@@ -86,22 +88,22 @@ class Linear(Layer):
         Returns:
             array: errors on the input vector.
         """
-        print("y_errors", y_errors, len(y_errors), y_errors.shape)
-        print("self.weights.T", self.weights.T, len(self.weights.T), self.weights.T.shape)
+        #print("y_errors", y_errors, len(y_errors), y_errors.shape)
+        #print("self.weights.T", self.weights.T, len(self.weights.T), self.weights.T.shape)
         x_errors = np.dot(y_errors, self.weights.T)
-        print("self.input.T", self.inputs.T, len(self.inputs.T), self.inputs.T.shape)
+        #print("self.input.T", self.inputs.T, len(self.inputs.T), self.inputs.T.shape)
         weight_errors = np.dot(self.inputs.T, y_errors)
-        print("weight_errors", weight_errors, len(weight_errors), weight_errors.shape)
-        print("self.weights", self.weights, len(self.weights), self.weights.shape)
+        #print("weight_errors", weight_errors, len(weight_errors), weight_errors.shape)
+        #print("self.weights", self.weights, len(self.weights), self.weights.shape)
 
-        print("lr * weight", self._lr * weight_errors)
+        #print("lr * weight", self._lr * weight_errors)
         weight_errors = self._lr * weight_errors
         weight_errors = weight_errors.reshape(self.weights.shape)
-        print("Reshaped weights", weight_errors, weight_errors.shape)
+        #print("Reshaped weights", weight_errors, weight_errors.shape)
         self.weights = self.weights - weight_errors
-        print("self.weights again", self.weights, len(self.weights), self.weights.shape)
+        #print("self.weights again", self.weights, len(self.weights), self.weights.shape)
         self.bias = self.bias - self._lr * y_errors
-        print("bias", self.bias)
+        #print("bias", self.bias)
         return x_errors
 
     @property

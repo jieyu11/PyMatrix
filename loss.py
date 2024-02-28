@@ -33,7 +33,7 @@ class CrossEntropyLoss:
         N = len(output)
         print("output", output, "target", target)
         assert len(target) == N, "target and output vectors must have same dimensions."
-        cost = np.dot(np.log(output+self.MINI), target.T) + np.dot(np.log(1-output+self.MINI), (1-target).T)
+        cost = np.dot(np.log(output+self.MINI), target.T) + np.dot(np.log(1.0-output+self.MINI), (1.0-target).T)
         print("Cross entropy loss", cost)
         cost *= -1 / len(output)
         print("Cross entropy loss again", cost)
