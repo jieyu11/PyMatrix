@@ -127,16 +127,15 @@ class Sigmoid(Layer):
     def __init__(self):
         pass
     
-    @staticmethod
-    def forward(X):
-        return 1 / (1 + np.exp(-X))
+    def forward(self, X):
+        self.y = 1 / (1 + np.exp(-X)) 
+        return self.y
     
     def backward(self, y_error):
         # derivative of the sigmoid function is:
         # sigmoid(x) = 1 / (1+exp(-x))
         # dsigmoid(x) / dx = sigmoid(x) * (1 - sigmoid(x))
-        sig = self.forward(y_error)
-        return y_error * sig * (1-sig) 
+        return y_error * self.y * (1 - self.y)
 
     def __repr__(self):
         return f"Sigmoid layer."
