@@ -85,9 +85,7 @@ class Linear(Layer):
             array: errors on the input vector.
         """
         x_errors = np.dot(y_errors, self.weights.T)
-        weight_errors = np.dot(self.inputs.T, y_errors)
-        weight_errors = self._lr * weight_errors
-        weight_errors = weight_errors.reshape(self.weights.shape)
+        weight_errors = self._lr * np.dot(self.inputs.T, y_errors)
         self.weights = self.weights - weight_errors
         self.bias = self.bias - self._lr * y_errors
         return x_errors
