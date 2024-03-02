@@ -1,4 +1,4 @@
-from nn import Layer, Linear, Relu
+from nn import Layer
 from loss import MSELoss
 from module import Module
 import numpy as np
@@ -43,7 +43,7 @@ class NeuralNet:
                 # loss functions takes array inputs
                 y_true = np.array([[y_true]])
                 err = self._loss.forward(y_pred, y_true)
-                total_error += err[0][0]
+                total_error += err
 
                 # backward propagation
                 d_error = self._loss.backward(y_pred, y_true)
@@ -64,7 +64,7 @@ class NeuralNet:
             y_true = np.array([[y_true]])
 
             err = self._loss.forward(y_pred, y_true)
-            total_error += err[0][0]
+            total_error += err
 
             predicted.append(y_pred[0])
         error = total_error / N_data

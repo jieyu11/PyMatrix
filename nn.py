@@ -118,7 +118,8 @@ class Relu(Layer):
 
     @staticmethod
     def backward(y_error):
-        return np.maximum(0., y_error)
+        #return np.maximum(0., y_error)
+        return y_error
 
     def __repr__(self):
         return f"Relu layer."

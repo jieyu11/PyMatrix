@@ -50,4 +50,4 @@ class CrossEntropyLoss:
         N = len(output)
         assert len(target) == N, "target and output vectors must have same dimensions."
         error = target / (output+self.MINI) * (-1./N) + (1-target) / (1-output+self.MINI) * (1./N)
-        return error
+        return np.mean(error)

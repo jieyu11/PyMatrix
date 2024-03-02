@@ -1,4 +1,4 @@
-from nn import Layer, Linear, Relu
+from nn import Layer
 from loss import MSELoss
 import logging
 logging.basicConfig(format="%(asctime)s %(levelname)s: %(message)s",
