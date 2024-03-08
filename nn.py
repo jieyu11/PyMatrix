@@ -138,3 +138,25 @@ class Sigmoid(Layer):
 
     def __repr__(self):
         return f"Sigmoid layer."
+
+class Softmax(Layer):
+    def __init__(self):
+        pass
+    
+    def forward(self, X):
+        # y = np.exp(X) / np.sum(np.exp(X))
+        # below is more stable and can avoid inf
+        e_x = np.exp(X - np.max(X))
+        self.y = e_x / np.sum(e_x)
+        return self.y
+    
+    def backward(self, y_error):
+        # derivative of the softmax function:
+        # given e.g. X = [a, b, c], 
+        # softmax (X) = exp(X) / sum(exp(X))
+        # softmax(a) = exp(a) / (exp(a)+exp(b)+exp(c))
+        # dsoftmax(a) / da = softmax(a) (1-softmax(a))
+        return y_error * self.y * (1 - self.y)
+
+    def __repr__(self):
+        return f"Softmax layer."
