@@ -17,13 +17,14 @@ class MSELoss:
         diff = output - target
         return 2 * diff / len(output)
 
-class CrossEntropyLoss:
+class BinaryCrossEntropyLoss:
     MINI = 1.e-12
     def __init__(self):
         pass
     
     def forward(self, output, target):
-        """For binary classification, targets are 0's and 1's.
+        """For binary classification, targets are 0's and 1's. For each data point, output
+        is a single value between 0 and 1, represented as a 2D matrix, e.g.: [[0.136]]
         The fuction is:
             Loss = - 1./N * sum(y_i^true * log(y_i^pred) + (1- y_i^true)*log(1 - y_i^pred))
         Args:
@@ -51,3 +52,44 @@ class CrossEntropyLoss:
         assert len(target) == N, "target and output vectors must have same dimensions."
         error = target / (output+self.MINI) * (-1./N) + (1-target) / (1-output+self.MINI) * (1./N)
         return np.mean(error)
+
+    def __repr__(self):
+        return f"Binary Classification Cross Entropy Loss."
+
+
+class MultiCrossEntropyLoss:
+    MINI = 1.e-12
+    def __init__(self):
+        pass
+    
+    def forward(self, output, target):
+        """For multi-class classification, targets are 0's and 1's. The output of each data
+        point is a vector of N values, given N is the number of classes. For N = 3, it shall
+        look like: [[0.35, 0.25, 0.4]]
+        The fuction is:
+            Loss = - sum_i (y_true_i * log(y_pred_i))
+        Args:
+            output (array): ML model prediction.
+            target (array): Truth values.
+        """
+        assert target.shape == output.shape, f"target {target.shape} and output {output.shape} not same dimensions."
+        # element wise multiplication with: target * log(output)
+        cost = np.sum(target * np.log(output+self.MINI))
+        return cost
+    
+    def backward(self, output, target):
+        """Backward probagation of multi class cross entropy loss function.
+        EY_i = y_i^pred - y_i^true
+        Loss = - sum(y_i^true * log(y_i^pred))
+        dLoss / dEY_i = - y_i^true / y_i^pred
+        
+        Args:
+            output (array): ML model prediction.
+            target (array): Truth values.
+        """
+        assert target.shape == output.shape, f"target {target.shape} and output {output.shape} not same dimensions."
+        error = - target / (output+self.MINI)
+        return error
+
+    def __repr__(self):
+        return f"Multi-class Classification Cross Entropy Loss."
