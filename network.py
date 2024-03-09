@@ -47,12 +47,12 @@ class NeuralNet:
 
                 # backward propagation
                 d_error = self._loss.backward(y_pred, y_true)
-                if idt < 10:
-                    print(idt, "error", d_error)
+                # if idt < 10:
+                #     print(idt, "error", d_error)
                 self._module.backward(d_error)
 
             if iep % EPRINT == 0:
-                logger.info("Epoch: %d, Loss: %12.3f\n" % (iep, total_error / N_data))
+                logger.info("Epoch: %d, Loss: %12.6f\n" % (iep, total_error / N_data))
         logger.info("Trained model!")
     
     def test(self, X_test, y_test):
