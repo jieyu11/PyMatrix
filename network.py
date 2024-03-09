@@ -40,13 +40,15 @@ class NeuralNet:
                 # forward propagation:
                 # input X needs to be 2D array like: [[1., 2., 3.]]
                 y_pred = self._module.forward(X.reshape((1, len(X))))
-                # loss functions takes array inputs
-                y_true = np.array([[y_true]])
+                # y_true is a 2D array with 1 row and 1 - N columns
+                y_true = np.array([y_true]).reshape(1, -1)
                 err = self._loss.forward(y_pred, y_true)
                 total_error += err
 
                 # backward propagation
                 d_error = self._loss.backward(y_pred, y_true)
+                if idt < 10:
+                    print(idt, "error", d_error)
                 self._module.backward(d_error)
 
             if iep % EPRINT == 0:
@@ -61,8 +63,7 @@ class NeuralNet:
         for idt, X in enumerate(X_test):
             y_true = y_test[idt]
             y_pred = self._module.forward(X.reshape((1, len(X))))
-            y_true = np.array([[y_true]])
-
+            y_true = np.array([y_true]).reshape(1, -1)
             err = self._loss.forward(y_pred, y_true)
             total_error += err
 

@@ -147,6 +147,9 @@ class Softmax(Layer):
         # y = np.exp(X) / np.sum(np.exp(X))
         # below is more stable and can avoid inf
         e_x = np.exp(X - np.max(X))
+        if np.any(np.isnan(e_x)):
+            print("NAN X", X, "max X", np.max(X))
+            print("ex", e_x)
         self.y = e_x / np.sum(e_x)
         return self.y
     
@@ -156,7 +159,11 @@ class Softmax(Layer):
         # softmax (X) = exp(X) / sum(exp(X))
         # softmax(a) = exp(a) / (exp(a)+exp(b)+exp(c))
         # dsoftmax(a) / da = softmax(a) (1-softmax(a))
-        return y_error * self.y * (1 - self.y)
+        # return y_error * self.y * (1 - self.y)
+        # y_error = - y_true / y_pred
+        # need to return y_pred - y_true
+        e = (y_error * self.y + self.y)
+        return e
 
     def __repr__(self):
         return f"Softmax layer."
