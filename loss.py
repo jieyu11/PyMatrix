@@ -74,7 +74,8 @@ class MultiCrossEntropyLoss:
         """
         assert target.shape == output.shape, f"target {target.shape} and output {output.shape} not same dimensions."
         # element wise multiplication with: target * log(output)
-        cost = - np.sum(target * np.log(output+self.MINI))
+        cost = np.sum(target * np.log(output+self.MINI))
+        cost *= -1
         return cost
     
     def backward(self, output, target):

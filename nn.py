@@ -116,7 +116,6 @@ class Relu(Layer):
 
     @staticmethod
     def backward(y_error):
-        #return np.maximum(0., y_error)
         return y_error
 
     def __repr__(self):
@@ -147,9 +146,6 @@ class Softmax(Layer):
         # y = np.exp(X) / np.sum(np.exp(X))
         # below is more stable and can avoid inf
         e_x = np.exp(X - np.max(X))
-        if np.any(np.isnan(e_x)):
-            print("NAN X", X, "max X", np.max(X))
-            print("ex", e_x)
         self.y = e_x / np.sum(e_x)
         return self.y
     
@@ -162,8 +158,8 @@ class Softmax(Layer):
         # return y_error * self.y * (1 - self.y)
         # y_error = - y_true / y_pred
         # need to return y_pred - y_true
-        e = (y_error * self.y + self.y)
-        return e
+        x_error = (y_error * self.y + self.y)
+        return x_error
 
     def __repr__(self):
         return f"Softmax layer."
