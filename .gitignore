@@ -1,3 +1,4 @@
 howto/
 data/
 .DS_Store
+.venv
